@@ -26,11 +26,7 @@ namespace MyPhoneBook.Controllers
             foreach (var address in addresses)
             {
                 addressList.Add(new AddressResponse(address));
-                //var addressInfo = new AddressResponse(address)
-                //{
-                //    
-
-                //};
+              
             }
                 return new JsonResult(addressList);
         }
@@ -45,19 +41,33 @@ namespace MyPhoneBook.Controllers
 
         // POST api/<AddressController>
         [HttpPost]
-        public int AddAddress([FromBody] AddressRequest addressRequest)
+        public IActionResult AddAddress([FromBody] AddressRequest addressRequest)
         {
 
             var addressInfo = new AddressModel()
             {
-                Id = addressRequest.Id,
+                ContactId = addressRequest.ContacId,
                 City = addressRequest.City,
                 Street = addressRequest.Street,
                 Building = addressRequest.Building,
                 Appartment = addressRequest.Appartment,
             };
-            return _addressService.AddAddress(addressInfo);
+
+            try
+            {
+                var address = new AddressResponse(_addressService.AddAddress(addressInfo));
+
+                if (address != null)
+                    return new JsonResult(address);
+
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = $"oops, an unexpected failure: {ex.Message}" });
+            }            
         }
+
 
         // PUT api/<AddressController>/5
         [HttpPut("{id}")]
@@ -71,7 +81,7 @@ namespace MyPhoneBook.Controllers
                 Building = addressRequest.Building,
                 Appartment = addressRequest.Appartment,
             };
-            return _addressService.UpdateAddressPartial(addressModel);
+            return _addressService.UpdateAddressComplete(addressModel);
         }
 
         // DELETE api/<AddressController>/5

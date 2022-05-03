@@ -9,10 +9,10 @@ namespace MyPhoneBook.Bll.IMyPhoneBookServices
     public interface IAddressService
     {
         public IEnumerable<AddressModel> GetAddresses();
-        public int AddAddress(AddressModel address);
+        public AddressModel AddAddress(AddressModel address);
         public AddressModel GetAddressById(int id);
         public AddressModel UpdateAddressComplete(AddressModel addressModel);
         public bool DeleteAddress(int id);
-        public AddressModel UpdateAddressPartial(AddressModel addressModel);
+      //  public AddressModel UpdateAddressPartial(AddressModel addressModel);
     }
 }

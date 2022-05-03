@@ -20,5 +20,9 @@ namespace MyPhoneBook.Response
             Building = addressModel.Building;
             Appartament = addressModel.Appartment;
         }
+        public AddressResponse()
+        {
+        }
+
     }
 }
