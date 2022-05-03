@@ -9,7 +9,7 @@ namespace MyPhoneBook.Bll.Services
 {
     public class AddressService : IAddressService
     {
-        public int AddAddress(AddressModel address)
+        public AddressModel AddAddress(AddressModel address)
         {
             using (var dbContext = new MyPhoneBookContext())
             {
@@ -19,13 +19,14 @@ namespace MyPhoneBook.Bll.Services
                     City = address.City,
                     Street = address.Street,
                     Building = address.Building,
-                    Appartment = address.Appartment,
+                    Appartment = address.Appartment,            
+                   
                 };
-                
-                var newAddress = dbContext.Add(dbaddress);
-                dbContext.SaveChanges();
 
-                return newAddress.Entity.Id;
+                dbContext.Add(dbaddress);
+                dbContext.SaveChanges();
+                address.Id = dbaddress.Id;
+                return address;
             }
         }
 
@@ -82,31 +83,31 @@ namespace MyPhoneBook.Bll.Services
         }
 
         // TO DO: Review partial update
-        public AddressModel UpdateAddressPartial(AddressModel inputAddressModel)
-        {
-            using (var dbContext = new MyPhoneBookContext())
-            {
-                var oldAddress = dbContext.Addresses.Where(a => a.Id == inputAddressModel.Id).FirstOrDefault();
+        //public AddressModel UpdateAddressPartial(AddressModel inputAddressModel)
+        //{
+        //    using (var dbContext = new MyPhoneBookContext())
+        //    {
+        //        var oldAddress = dbContext.Addresses.Where(a => a.Id == inputAddressModel.Id).FirstOrDefault();
 
-                if (oldAddress != null && oldAddress.Status != (int)ContactStatus.Deleted)
-                {
-                    oldAddress.City = inputAddressModel.City == null ? oldAddress.City : inputAddressModel.City;
-                    oldAddress.Street = inputAddressModel.Street == null ? oldAddress.Street : inputAddressModel.Street;
-                    oldAddress.Building = inputAddressModel.Building == null ? oldAddress.Building : inputAddressModel.Building;
-                    oldAddress.Appartment = inputAddressModel.Appartment == null ? oldAddress.Appartment : inputAddressModel.Appartment;
-                    dbContext.SaveChanges();
-                    var outputAddressModel = new AddressModel
-                    {
-                        City = oldAddress.City,
-                        Street = oldAddress.Street,
-                        Building = oldAddress.Building,
-                        Appartment = oldAddress.Appartment,
-                    };
-                    return outputAddressModel;
-                }
-                return null;
-            }
-        }
+        //        if (oldAddress != null && oldAddress.Status != (int)ContactStatus.Deleted)
+        //        {
+        //            oldAddress.City = inputAddressModel.City == null ? oldAddress.City : inputAddressModel.City;
+        //            oldAddress.Street = inputAddressModel.Street == null ? oldAddress.Street : inputAddressModel.Street;
+        //            oldAddress.Building = inputAddressModel.Building == null ? oldAddress.Building : inputAddressModel.Building;
+        //            oldAddress.Appartment = inputAddressModel.Appartment == null ? oldAddress.Appartment : inputAddressModel.Appartment;
+        //            dbContext.SaveChanges();
+        //            var outputAddressModel = new AddressModel
+        //            {
+        //                City = oldAddress.City,
+        //                Street = oldAddress.Street,
+        //                Building = oldAddress.Building,
+        //                Appartment = oldAddress.Appartment,
+        //            };
+        //            return outputAddressModel;
+        //        }
+        //        return null;
+        //    }
+        //}
 
         public bool DeleteAddress(int id)
         {
