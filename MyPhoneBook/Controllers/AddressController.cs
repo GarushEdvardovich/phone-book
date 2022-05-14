@@ -13,87 +13,107 @@ namespace MyPhoneBook.Controllers
     public class AddressController : ControllerBase
     {
         private IAddressService _addressService;
-        public AddressController(IAddressService addressService)
+        private IContactService _contactService;
+        public AddressController(IAddressService addressService, IContactService contactService)
         {
             _addressService = addressService;
+            _contactService = contactService;
         }
         // GET: api/<AddressController>
         [HttpGet]
-        public IActionResult GetAddresses()
+        public async Task<List<AddressResponse>> GetAddresses()
         {
-            var addresses = _addressService.GetAddresses();
-            var addressList = new List<AddressResponse>();
-            foreach (var address in addresses)
-            {
-                addressList.Add(new AddressResponse(address));
-              
-            }
-                return new JsonResult(addressList);
+            var addresses = await _addressService.GetAddresses();
+            var addresResponse = new AddressResponse().AResponseList(addresses); //AResponseList @ stanum em responsi mej chisht a?
+            return addresResponse;
+            //foreach (var address in addresses)
+            //{
+            //    addressList.Add(new AddressResponse(address));
+
+            //}
+            //return new JsonResult(addressList);
         }
 
         // GET api/<AddressController>/5
         [HttpGet("{id}")]
-        public AddressResponse GetAddressById(int id)
+        public async Task<AddressResponse> GetAddressById(int id)
         {
-            var address = _addressService.GetAddressById(id);
+            var address = await _addressService.GetAddressById(id);
             return new AddressResponse(address);
         }
 
         // POST api/<AddressController>
         [HttpPost]
-        public IActionResult AddAddress([FromBody] AddressRequest addressRequest)
+        public /*ActionResult*/ async Task<AddressResponse> AddAddress([FromBody] AddressRequest addressRequest)
         {
-
-            var addressInfo = new AddressModel()
+            var contact = await _contactService.GetContactById(addressRequest.ContacId);
+            if (contact != null)
             {
-                ContactId = addressRequest.ContacId,
-                City = addressRequest.City,
-                Street = addressRequest.Street,
-                Building = addressRequest.Building,
-                Appartment = addressRequest.Appartment,
-            };
+                var addressInfo = new AddressModel()
+                {
+                    ContactId = addressRequest.ContacId,
+                    City = addressRequest.City,
+                    Street = addressRequest.Street,
+                    Building = addressRequest.Building,
+                    Appartment = addressRequest.Appartment,
+                };
 
-            try
-            {
-                var address = new AddressResponse(_addressService.AddAddress(addressInfo));
-
-                if (address != null)
-                    return new JsonResult(address);
-
-                return BadRequest();
+                /* var address = */
+                await _addressService.AddAddress(addressInfo);
+                var addressResponse = new AddressResponse(addressInfo);
+                return /*Ok(addressResponse)*/addressResponse;
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = $"oops, an unexpected failure: {ex.Message}" });
-            }            
-        }
+            return null;
 
+            //try
+            //{
+            //    var address = new AddressResponse(_addressService.AddAddress(addressInfo));
+            //    if (address != null)
+            //        return new JsonResult(address);
+            //    return BadRequest();
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, new { Message = $"oops, an unexpected failure: {ex.Message}" });
+            //}
+        }
 
         // PUT api/<AddressController>/5
         [HttpPut("{id}")]
-        public AddressModel UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
+        public /*ActionResult*/async Task<AddressResponse> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
         {
-            var addressModel = new AddressModel()
+            var contact = _addressService.GetAddressById(id);
+            if (contact != null)
             {
-                Id = addressRequest.Id,
-                City = addressRequest.City,
-                Street = addressRequest.Street,
-                Building = addressRequest.Building,
-                Appartment = addressRequest.Appartment,
-            };
-            return _addressService.UpdateAddressComplete(addressModel);
+                var addressModel = new AddressModel()
+                {
+                    ContactId = addressRequest.ContacId,
+                    City = addressRequest.City,
+                    Street = addressRequest.Street,
+                    Building = addressRequest.Building,
+                    Appartment = addressRequest.Appartment,
+                };
+
+                var address = await _addressService.UpdateAddressComplete(id, addressModel);
+                return new AddressResponse(address);
+
+            }
+            return null;
+
         }
 
         // DELETE api/<AddressController>/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteAddress(int id)
+        public async Task<IActionResult> DeleteAddress(int id)
         {
-            var result = _addressService.DeleteAddress(id);
 
-            if(result)
-                return new JsonResult(result);
-            
-            return StatusCode(StatusCodes.Status204NoContent);
+            var result = await _addressService.GetAddressById(id);  // _addressService.DeleteAddress(id);
+
+            if (result != null)
+            {
+                return new JsonResult(await _addressService.DeleteAddress(id));
+            }
+            return StatusCode(404);
         }
     }
 }

@@ -1,81 +1,81 @@
-﻿using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.EntityFrameworkCore;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
-using MyPhoneBook.Controllers.Models;
 using MyPhoneBook.Dal.Model;
 using MyPhoneBook.Models;
+
+//TODO: Replace with Interface DBContext
 
 namespace MyPhoneBook.Bll.Services
 {
     public class ContactService : IContactService
     {
         //TO DO: If a record with same FirstName and/or Primary Phone Number exists and is with status Deleted we can recover it.
-        public ContactModel  AddContact(ContactModel contactModel)
+        private readonly IMyPhoneBookContext _dbContext;
+        public ContactService(IMyPhoneBookContext context)
+        {
+            _dbContext = context;
+        }
+
+        public async Task<ContactModel> AddContact(ContactModel contactModel)
         {
             if (string.IsNullOrWhiteSpace(contactModel.FirstName))
             {
                 throw new Exception("First name in the contact is mandatory.");
             }
 
-            using (var dbContext = new MyPhoneBookContext())
+            var contactRecord = new Contact()
             {
-                var contactRecord = new Contact()                        
-                {                   
-                    FirstName = contactModel.FirstName,
-                    LastName = contactModel.LastName,
-                    PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber,
-                    SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber,
-                    Status = (int)ContactStatus.Active,
-                    Email = contactModel.Email,
-                };
+                FirstName = contactModel.FirstName,
+                LastName = contactModel.LastName,
+                PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber,
+                SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber,
+                Email = contactModel.Email,
+                Status = (int)contactModel.Status,
+            };
 
-                var savedContactRecord =  dbContext.Contacts.Add(contactRecord);
-                dbContext.SaveChanges();               
-                contactModel.Id = savedContactRecord.Entity.Id;
+            var savedContactRecord = _dbContext.Contacts.AddAsync(contactRecord);
+            _dbContext.SaveChanges();
 
-                return contactModel;                
-            }
+            var contact = await _dbContext.Contacts.Where(con => con.PrimaryPhoneNumber == contactModel.PrimaryPhoneNumber).FirstOrDefaultAsync();
+
+            return new ContactModel(contact);
         }
-
-        public ContactModel GetContactById(int id)
+        public async Task<ContactModel> GetContactById(int id)
         {
-            using (var dbContext = new MyPhoneBookContext())
             {
-                var contact = dbContext.Contacts.Where(c => c.Id == id && c.Status != (int)ContactStatus.Deleted).FirstOrDefault();
-
+                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status != (int)ContactStatus.Deleted).FirstOrDefaultAsync();
                 if (contact != null)
                 {
                     return new ContactModel(contact);
                 }
-
                 return null;
             }
         }
 
-        public IEnumerable<ContactModel> GetContacts()
+        public async Task<List<ContactModel>> GetContacts()
         {
-            using (var dbContext = new MyPhoneBookContext())
             {
-                var dbContacts = dbContext.Contacts.Where(c => c.Status != (int)ContactStatus.Deleted).ToList();
-
+                var dbContacts = await _dbContext.Contacts.Where(c => c.Status == (int)ContactStatus.Active).ToListAsync();//.ToList();
+                List<ContactModel> contactModelList = new List<ContactModel>();
                 foreach (var dbContact in dbContacts)
                 {
-                    var contact = new ContactModel(dbContact);
-                    yield return contact;
+                    var contactModel = new ContactModel(dbContact);
+                    contactModelList.Add(contactModel);
+
                 }
+                return contactModelList;
             }
         }
 
-        public bool DeleteContact(int id)
+        public async Task<bool> DeleteContact(int id)
         {
-            using (var dbContext = new MyPhoneBookContext())
             {
-                var contact = dbContext.Contacts.Where(c => c.Id == id && c.Status != (int)ContactStatus.Deleted).FirstOrDefault();
+                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
 
                 if (contact != null)
                 {
                     contact.Status = (int)ContactStatus.Deleted;
-                    dbContext.SaveChanges();
+                    _dbContext.SaveChanges();
                     return true;
                 }
             }
@@ -83,25 +83,24 @@ namespace MyPhoneBook.Bll.Services
             return false;
         }
 
-        public ContactModel UpdateContact(ContactModel contactModel)
+        public async Task<ContactModel> UpdateContact(int id, ContactModel contactModel)
         {
             if (string.IsNullOrWhiteSpace(contactModel.FirstName))
             {
                 throw new Exception("First name in the contact is mandatory.");
             }
 
-            using (var dbContext = new MyPhoneBookContext())
             {
-                var contact = dbContext.Contacts.Where(c => c.Id == contactModel.Id && c.Status != (int)ContactStatus.Deleted).FirstOrDefault();
-                
+                var contact = await _dbContext.Contacts.Where(_c => _c.Id == id && _c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
                 if (contact != null)
-                {                    
+                {
                     contact.FirstName = contactModel.FirstName;
                     contact.LastName = contactModel.LastName;
                     contact.PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber;
                     contact.SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber;
-                    contact.Email = contactModel.Email;                    
-                    dbContext.SaveChanges();
+                    contact.Email = contactModel.Email;
+                    _dbContext.SaveChanges();
+                    contactModel.Id = contact.Id;
 
                     return contactModel;
                 }

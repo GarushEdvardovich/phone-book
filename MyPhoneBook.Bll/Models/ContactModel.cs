@@ -1,6 +1,4 @@
-﻿
-
-using MyPhoneBook.Dal.Model;
+﻿using MyPhoneBook.Dal.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyPhoneBook.Models
@@ -22,13 +20,13 @@ namespace MyPhoneBook.Models
             Addresses = contact.Addresses;
         }
 
-        public int Id { get; set; }              
-        public string FirstName { get; set; }  
-        public string LastName { get; set; }    
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string PrimaryPhoneNumber { get; set; }
-        public string SecondaryPhoneNumber { get; set; }    
-        [EmailAddress]
-        public string Email { get; set; }  
+        public string SecondaryPhoneNumber { get; set; }
+        public string Email { get; set; }
+        [Display(AutoGenerateField = true)]
         public ContactStatus Status { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
     }
