@@ -1,18 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using MyPhoneBook.Bll.IMyPhoneBookServices;
 using MyPhoneBook.Dal.Model;
 
-namespace MyPhoneBook.Controllers.Models  
+namespace MyPhoneBook.Controllers.Models
 {
-   
-    public class MyPhoneBookContext:DbContext
+
+
+    public class MyPhoneBookContext : DbContext, IMyPhoneBookContext
     {
+        private readonly string _connectionString;
+        private DbContextOptions<MyPhoneBookContext> _options;
+
+        public MyPhoneBookContext(DbContextOptions<MyPhoneBookContext> options) : base(options)
+        {
+            _options = options;
+            Console.WriteLine("MyPhoneBookContext with options is called");
+        }
+
+        public MyPhoneBookContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public DbSet<Contact> Contacts { get; set; }
+
         public DbSet<Address> Addresses { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-           => optionsBuilder.UseNpgsql("Host=localhost;Database=MyPhonebook;Username=postgres;Password=12061988");
-        public MyPhoneBookContext() { }
-        public MyPhoneBookContext(DbContextOptions<MyPhoneBookContext> options) : base(options) { }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -23,6 +36,11 @@ namespace MyPhoneBook.Controllers.Models
 
             base.OnModelCreating(modelBuilder);
         }
+
+        void IMyPhoneBookContext.SaveChanges()
+        {
+            SaveChanges();
+        }       
     }
-   
+
 }

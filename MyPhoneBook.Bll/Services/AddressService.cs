@@ -1,85 +1,92 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.EntityFrameworkCore;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
-using MyPhoneBook.Controllers.Models;
 using MyPhoneBook.Dal.Model;
 using MyPhoneBook.Models;
 
+//TODO: Replace with Interface DBContext
 
 namespace MyPhoneBook.Bll.Services
 {
     public class AddressService : IAddressService
     {
-        public AddressModel AddAddress(AddressModel address)
+        private readonly IMyPhoneBookContext _dbContext;
+        public AddressService(IMyPhoneBookContext context)
         {
-            using (var dbContext = new MyPhoneBookContext())
-            {
-                var dbaddress = new Address()
-                {
-                    ContactId = address.ContactId,
-                    City = address.City,
-                    Street = address.Street,
-                    Building = address.Building,
-                    Appartment = address.Appartment,            
-                   
-                };
-
-                dbContext.Add(dbaddress);
-                dbContext.SaveChanges();
-                address.Id = dbaddress.Id;
-                return address;
-            }
+            _dbContext = context;
         }
-
-        public IEnumerable<AddressModel> GetAddresses()
+        public async Task<AddressModel> AddAddress(AddressModel address)
         {
-            using (var dbContext = new MyPhoneBookContext())
+            var dbAddress = new Address()
             {
-                var addresses = dbContext.Addresses.Where(c => c.Status != (int)ContactStatus.Deleted).ToList();
-
+                ContactId = address.ContactId,
+                City = address.City,
+                Street = address.Street,
+                Building = address.Building,
+                Appartment = address.Appartment,
+            };
+            await _dbContext.Addresses.AddAsync(dbAddress);
+            _dbContext.SaveChanges();
+            address.Id = dbAddress.Id;
+            return address;
+        }
+        public async Task<List<AddressModel>> GetAddresses()
+        {
+            {
+                var addresses = await _dbContext.Addresses.Where(c => c.Status != (int)ContactStatus.Deleted).ToListAsync();
+                List<AddressModel> addressModelList = new List<AddressModel>();
                 foreach (var address in addresses)
                 {
                     var dbAddress = new AddressModel(address);
-
-                    yield return dbAddress;
+                    addressModelList.Add(dbAddress);
                 }
+                return addressModelList;
             }
         }
 
-        public AddressModel GetAddressById(int id)
+        public async Task<AddressModel> GetAddressById(int id)
         {
-            using (var dbContext = new MyPhoneBookContext())
             {
-                var address = dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)ContactStatus.Deleted).FirstOrDefault();
-
+                var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)ContactStatus.Deleted).FirstOrDefaultAsync();
                 if (address != null)
                 {
                     return new AddressModel(address);
                 }
-
                 return null;
             }
         }
-
-        public AddressModel UpdateAddressComplete(AddressModel updatedAddressModel)
+        public async Task<AddressModel> UpdateAddressComplete(int id, AddressModel updatedAddressModel)
         {
-            using (var dbContext = new MyPhoneBookContext())
             {
-                var oldAddress = dbContext.Addresses.Where(a => a.Id == updatedAddressModel.Id && a.Status == (int)ContactStatus.Deleted).FirstOrDefault();
+                // var getRecord = _addressService.GetAddressById(id);
+                var oldAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
                 if (oldAddress != null)
                 {
+                    // oldAddress.Id = id; 
                     oldAddress.ContactId = updatedAddressModel.ContactId;
                     oldAddress.City = updatedAddressModel.City;
                     oldAddress.Street = updatedAddressModel.Street;
                     oldAddress.Building = updatedAddressModel.Building;
                     oldAddress.Appartment = updatedAddressModel.Appartment;
-
-                    dbContext.SaveChanges();
-
+                    _dbContext.SaveChanges();
+                    updatedAddressModel.Id = id;
                     return updatedAddressModel;
                 }
-
                 return null;
             }
+        }
+        public async Task<bool> DeleteAddress(int id)
+        {
+            {
+                var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
+                if (address != null)
+                {
+                    address.Status = (int)ContactStatus.Deleted;
+                    _dbContext.SaveChanges();
+                    return true;
+                }
+
+            }
+            return false;
         }
 
         // TO DO: Review partial update
@@ -109,22 +116,5 @@ namespace MyPhoneBook.Bll.Services
         //    }
         //}
 
-        public bool DeleteAddress(int id)
-        {
-            using (var dbContext = new MyPhoneBookContext())
-            {
-                var address = dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)ContactStatus.Deleted).FirstOrDefault();
-
-                if (address != null && address.Status != (int)ContactStatus.Deleted)
-                {
-                    address.Status =(int)ContactStatus.Deleted;
-                    dbContext.SaveChanges();
-
-                    return true;
-                }
-
-            }
-            return false;
-        }
     }
 }
