@@ -29,7 +29,7 @@ namespace MyPhoneBook.Dal.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Appartment")
+                    b.Property<string>("Apartment")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -41,9 +41,6 @@ namespace MyPhoneBook.Dal.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ContactId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -53,9 +50,7 @@ namespace MyPhoneBook.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContactId");
-
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("MyPhoneBook.Dal.Model.Contact", b =>
@@ -65,6 +60,9 @@ namespace MyPhoneBook.Dal.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -91,21 +89,7 @@ namespace MyPhoneBook.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contacts");
-                });
-
-            modelBuilder.Entity("MyPhoneBook.Dal.Model.Address", b =>
-                {
-                    b.HasOne("MyPhoneBook.Dal.Model.Contact", null)
-                        .WithMany("Addresses")
-                        .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MyPhoneBook.Dal.Model.Contact", b =>
-                {
-                    b.Navigation("Addresses");
+                    b.ToTable("Contacts", (string)null);
                 });
 #pragma warning restore 612, 618
         }

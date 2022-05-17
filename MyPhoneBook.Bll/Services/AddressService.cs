@@ -17,12 +17,11 @@ namespace MyPhoneBook.Bll.Services
         public async Task<AddressModel> AddAddress(AddressModel address)
         {
             var dbAddress = new Address()
-            {
-                ContactId = address.ContactId,
+            {                   
                 City = address.City,
                 Street = address.Street,
                 Building = address.Building,
-                Appartment = address.Appartment,
+                Apartment = address.Apartment,
             };
             await _dbContext.Addresses.AddAsync(dbAddress);
             _dbContext.SaveChanges();
@@ -32,7 +31,7 @@ namespace MyPhoneBook.Bll.Services
         public async Task<List<AddressModel>> GetAddresses()
         {
             {
-                var addresses = await _dbContext.Addresses.Where(c => c.Status != (int)ContactStatus.Deleted).ToListAsync();
+                var addresses = await _dbContext.Addresses.ToListAsync();
                 List<AddressModel> addressModelList = new List<AddressModel>();
                 foreach (var address in addresses)
                 {
@@ -61,12 +60,11 @@ namespace MyPhoneBook.Bll.Services
                 var oldAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
                 if (oldAddress != null)
                 {
-                    // oldAddress.Id = id; 
-                    oldAddress.ContactId = updatedAddressModel.ContactId;
+                    // oldAddress.Id = id;                    
                     oldAddress.City = updatedAddressModel.City;
                     oldAddress.Street = updatedAddressModel.Street;
                     oldAddress.Building = updatedAddressModel.Building;
-                    oldAddress.Appartment = updatedAddressModel.Appartment;
+                    oldAddress.Apartment = updatedAddressModel.Apartment;
                     _dbContext.SaveChanges();
                     updatedAddressModel.Id = id;
                     return updatedAddressModel;

@@ -10,10 +10,10 @@ namespace MyPhoneBook.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactController : ControllerBase
+    public class ContactsController : ControllerBase
     {
         private IContactService _contactInfoService;
-        public ContactController(IContactService contacInfoService)
+        public ContactsController(IContactService contacInfoService)
         {
             _contactInfoService = contacInfoService;
         }
@@ -41,6 +41,8 @@ namespace MyPhoneBook.Controllers
         {
             var contactModel = new ContactModel()
             {
+                //Id = contactRequest.Id,
+                AddressId = contactRequest.AddressId,
                 PrimaryPhoneNumber = contactRequest.PrimaryPhoneNumber,
                 SecondaryPhoneNumber = contactRequest.SecondaryPhoneNumber,
                 Email = contactRequest.Email,
@@ -53,6 +55,7 @@ namespace MyPhoneBook.Controllers
             return contactResponse;
         }
 
+
         // PUT api/<ContactController>/5
         [HttpPut("{id}")]
         public async Task<ContactResponse> UpdateContact(int id, [FromBody] ContactRequest contactRequest)
@@ -63,6 +66,7 @@ namespace MyPhoneBook.Controllers
             {
                 var contactModel = new ContactModel()
                 {
+                    AddressId=contactRequest.AddressId,
                     PrimaryPhoneNumber = contactRequest.PrimaryPhoneNumber,
                     SecondaryPhoneNumber = contactRequest.SecondaryPhoneNumber,
                     Email = contactRequest.Email,
@@ -90,3 +94,4 @@ namespace MyPhoneBook.Controllers
         }
     }
 }
+

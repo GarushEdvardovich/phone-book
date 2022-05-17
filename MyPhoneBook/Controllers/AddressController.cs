@@ -10,31 +10,24 @@ namespace MyPhoneBook.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AddressController : ControllerBase
+    public class AddressesController : ControllerBase
     {
         private IAddressService _addressService;
         private IContactService _contactService;
-        public AddressController(IAddressService addressService, IContactService contactService)
+        public AddressesController(IAddressService addressService, IContactService contactService)
         {
             _addressService = addressService;
             _contactService = contactService;
         }
-        // GET: api/<AddressController>
+        // GET: api/<AddressesController>
         [HttpGet]
         public async Task<List<AddressResponse>> GetAddresses()
         {
             var addresses = await _addressService.GetAddresses();
-            var addresResponse = new AddressResponse().AResponseList(addresses); //AResponseList @ stanum em responsi mej chisht a?
-            return addresResponse;
-            //foreach (var address in addresses)
-            //{
-            //    addressList.Add(new AddressResponse(address));
-
-            //}
-            //return new JsonResult(addressList);
+            return AddressResponse.GetResponseList(addresses);          
         }
 
-        // GET api/<AddressController>/5
+        // GET api/<AddressesController>/5
         [HttpGet("{id}")]
         public async Task<AddressResponse> GetAddressById(int id)
         {
@@ -42,72 +35,60 @@ namespace MyPhoneBook.Controllers
             return new AddressResponse(address);
         }
 
-        // POST api/<AddressController>
+        // POST api/<AddressesController>
         [HttpPost]
         public /*ActionResult*/ async Task<AddressResponse> AddAddress([FromBody] AddressRequest addressRequest)
         {
-            var contact = await _contactService.GetContactById(addressRequest.ContacId);
-            if (contact != null)
+            var address = await _addressService.GetAddressById(addressRequest.Id);
+            if (address == null)
             {
                 var addressInfo = new AddressModel()
                 {
-                    ContactId = addressRequest.ContacId,
                     City = addressRequest.City,
                     Street = addressRequest.Street,
                     Building = addressRequest.Building,
-                    Appartment = addressRequest.Appartment,
+                    Apartment = addressRequest.Apartment,
                 };
 
-                /* var address = */
+             
                 await _addressService.AddAddress(addressInfo);
                 var addressResponse = new AddressResponse(addressInfo);
                 return /*Ok(addressResponse)*/addressResponse;
             }
             return null;
 
-            //try
-            //{
-            //    var address = new AddressResponse(_addressService.AddAddress(addressInfo));
-            //    if (address != null)
-            //        return new JsonResult(address);
-            //    return BadRequest();
-            //}
-            //catch (Exception ex)
-            //{
-            //    return StatusCode(500, new { Message = $"oops, an unexpected failure: {ex.Message}" });
-            //}
+            
         }
 
-        // PUT api/<AddressController>/5
+        // PUT api/<AddressesController>/5
         [HttpPut("{id}")]
-        public /*ActionResult*/async Task<AddressResponse> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
+        public async Task<ActionResult<AddressResponse>> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
         {
-            var contact = _addressService.GetAddressById(id);
-            if (contact != null)
+            var address = _addressService.GetAddressById(id);
+            if (address != null)
             {
                 var addressModel = new AddressModel()
-                {
-                    ContactId = addressRequest.ContacId,
+                {                   
                     City = addressRequest.City,
                     Street = addressRequest.Street,
                     Building = addressRequest.Building,
-                    Appartment = addressRequest.Appartment,
+                    Apartment = addressRequest.Apartment,
                 };
 
-                var address = await _addressService.UpdateAddressComplete(id, addressModel);
-                return new AddressResponse(address);
+                /*var addressModel =*/ await _addressService.UpdateAddressComplete(id, addressModel);
+                return Ok("updated success");
 
             }
             return null;
 
         }
 
-        // DELETE api/<AddressController>/5
+        // DELETE api/<AddressesController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAddress(int id)
         {
 
-            var result = await _addressService.GetAddressById(id);  // _addressService.DeleteAddress(id);
+            var result = await _addressService.GetAddressById(id);  
 
             if (result != null)
             {
