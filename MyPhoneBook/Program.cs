@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IMyPhoneBookContext, MyPhoneBookContext>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 
 var app = builder.Build();

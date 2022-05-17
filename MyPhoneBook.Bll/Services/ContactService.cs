@@ -24,7 +24,9 @@ namespace MyPhoneBook.Bll.Services
             }
 
             var contactRecord = new Contact()
-            {
+            {    
+                Id = contactModel.Id,
+                AddressId = contactModel.AddressId,
                 FirstName = contactModel.FirstName,
                 LastName = contactModel.LastName,
                 PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber,
@@ -36,9 +38,10 @@ namespace MyPhoneBook.Bll.Services
             var savedContactRecord = _dbContext.Contacts.AddAsync(contactRecord);
             _dbContext.SaveChanges();
 
-            var contact = await _dbContext.Contacts.Where(con => con.PrimaryPhoneNumber == contactModel.PrimaryPhoneNumber).FirstOrDefaultAsync();
-
-            return new ContactModel(contact);
+            var contact = await _dbContext.Contacts.Where(con => con.PrimaryPhoneNumber == contactModel.PrimaryPhoneNumber).FirstOrDefaultAsync();          
+            
+                return new ContactModel(contact);          
+           
         }
         public async Task<ContactModel> GetContactById(int id)
         {
@@ -94,6 +97,7 @@ namespace MyPhoneBook.Bll.Services
                 var contact = await _dbContext.Contacts.Where(_c => _c.Id == id && _c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
                 if (contact != null)
                 {
+                    contact.AddressId = contactModel.AddressId;
                     contact.FirstName = contactModel.FirstName;
                     contact.LastName = contactModel.LastName;
                     contact.PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber;

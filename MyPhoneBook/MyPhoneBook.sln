@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyPhoneBook", "MyPhoneBook.csproj", "{A7203380-6C3B-4E03-97EB-2E3D76E37A82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyPhoneBook.Bll", "..\MyPhoneBook.Bll\MyPhoneBook.Bll.csproj", "{6A018E49-1175-4C9B-B8B1-4517754B03C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyPhoneBook.Bll", "..\MyPhoneBook.Bll\MyPhoneBook.Bll.csproj", "{6A018E49-1175-4C9B-B8B1-4517754B03C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyPhoneBook.Dal", "..\MyPhoneBook.Dal\MyPhoneBook.Dal.csproj", "{2D5D46D7-8931-49A2-AAD2-B88EBA6164C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyPhoneBook.Dal", "..\MyPhoneBook.Dal\MyPhoneBook.Dal.csproj", "{2D5D46D7-8931-49A2-AAD2-B88EBA6164C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

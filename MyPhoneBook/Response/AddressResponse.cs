@@ -1,29 +1,25 @@
 ﻿using MyPhoneBook.Models;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace MyPhoneBook.Response
 {
     public class AddressResponse
     {
-        public int Id { get; set; }
-        public int ContactId { get; set; }
+        [Required]
+        public int Id { get; set; }       
         public string City { get; set; }
-        public string Street { get; set; }
-        public string Building { get; set; }
-        public string Appartament { get; set; }
+        public string Street { get; set; } 
+        public string Building { get; set; } 
+        public string Apartment { get; set; }  
         public AddressResponse(AddressModel addressModel)
         {
-            Id = addressModel.Id;
-            ContactId = addressModel.ContactId;
+            Id = addressModel.Id;           
             City = addressModel.City;
             Street = addressModel.Street;
             Building = addressModel.Building;
-            Appartament = addressModel.Appartment;
-        }
-        public AddressResponse()
-        {
-        }
-        public List<AddressResponse> AResponseList(List<AddressModel> addressModels)
+            Apartment = addressModel.Apartment;
+        }       
+        public static List<AddressResponse> GetResponseList(List<AddressModel> addressModels)
         {
             List<AddressResponse> addresses = new List<AddressResponse>();
             foreach (var addressModel in addressModels)
