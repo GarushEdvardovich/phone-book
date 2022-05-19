@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace MyPhoneBook.Response
 {
     public class AddressResponse
-    {
-        [Required]
+    {        
         public int Id { get; set; }       
         public string City { get; set; }
         public string Street { get; set; } 

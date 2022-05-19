@@ -24,46 +24,56 @@ namespace MyPhoneBook.Controllers
         public async Task<List<AddressResponse>> GetAddresses()
         {
             var addresses = await _addressService.GetAddresses();
-            return AddressResponse.GetResponseList(addresses);          
-        }
+            return AddressResponse.GetResponseList(addresses);           
+        }       
 
         // GET api/<AddressesController>/5
         [HttpGet("{id}")]
-        public async Task<AddressResponse> GetAddressById(int id)
+        public async Task<ActionResult> GetAddressById(int id)
         {
+            if (id <= 0 )
+            {
+                return BadRequest("id must be positive integer");
+            }
             var address = await _addressService.GetAddressById(id);
-            return new AddressResponse(address);
+            if (address == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
+            }
+            return Ok(address);
         }
 
         // POST api/<AddressesController>
         [HttpPost]
-        public /*ActionResult*/ async Task<AddressResponse> AddAddress([FromBody] AddressRequest addressRequest)
+        public async Task<ActionResult> AddAddress([FromBody] AddressRequest addressRequest)
         {
             var address = await _addressService.GetAddressById(addressRequest.Id);
-            if (address == null)
+            
+            if (address == null)                            //mi hat nayel a petq es method @
             {
                 var addressInfo = new AddressModel()
-                {
+                {                   
                     City = addressRequest.City,
-                    Street = addressRequest.Street,
+                    Street = addressRequest.Street,              
                     Building = addressRequest.Building,
                     Apartment = addressRequest.Apartment,
                 };
-
-             
+               
+                
                 await _addressService.AddAddress(addressInfo);
-                var addressResponse = new AddressResponse(addressInfo);
-                return /*Ok(addressResponse)*/addressResponse;
+                return Ok(addressInfo); 
             }
-            return null;
-
-            
+            return BadRequest($"Error message ");            
         }
 
         // PUT api/<AddressesController>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<AddressResponse>> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Id must be positive integer");
+            }
             var address = _addressService.GetAddressById(id);
             if (address != null)
             {
@@ -75,26 +85,30 @@ namespace MyPhoneBook.Controllers
                     Apartment = addressRequest.Apartment,
                 };
 
-                /*var addressModel =*/ await _addressService.UpdateAddressComplete(id, addressModel);
-                return Ok("updated success");
+                var newAddressModel = await _addressService.UpdateAddressComplete(id, addressModel);
+                return Ok(newAddressModel);
 
             }
-            return null;
+            return StatusCode(StatusCodes.Status400BadRequest, $"address with id {id} not found");
 
         }
 
         // DELETE api/<AddressesController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAddress(int id)
+        public async Task<ActionResult> DeleteAddress(int id)
         {
-
+            if (id<=0)
+            {
+                return BadRequest("invalid id provided");
+            }
             var result = await _addressService.GetAddressById(id);  
 
             if (result != null)
             {
-                return new JsonResult(await _addressService.DeleteAddress(id));
+               await _addressService.DeleteAddress(id);
+                return Ok($"address with Id {id} was  successfully deleted.");
             }
-            return StatusCode(404);
+            return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not founded");
         }
     }
 }

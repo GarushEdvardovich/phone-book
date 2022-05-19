@@ -28,7 +28,6 @@ namespace MyPhoneBook.Controllers.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.Entity<Contact>().HasKey(x => x.Id);
             modelBuilder.Entity<Contact>().ToTable("Contacts");
             modelBuilder.Entity<Address>().HasKey(x => x.Id);
