@@ -17,11 +17,7 @@ namespace MyPhoneBook.Bll.Services
         }
 
         public async Task<ContactModel> AddContact(ContactModel contactModel)
-        {
-            if (string.IsNullOrWhiteSpace(contactModel.FirstName))
-            {
-                throw new Exception("First name in the contact is mandatory.");
-            }
+        {           
 
             var contactRecord = new Contact()
             {    
@@ -35,18 +31,15 @@ namespace MyPhoneBook.Bll.Services
                 Status = (int)contactModel.Status,
             };
 
-            var savedContactRecord = _dbContext.Contacts.AddAsync(contactRecord);
-            _dbContext.SaveChanges();
-
-            var contact = await _dbContext.Contacts.Where(con => con.PrimaryPhoneNumber == contactModel.PrimaryPhoneNumber).FirstOrDefaultAsync();          
-            
-                return new ContactModel(contact);          
+            var savedContactRecord = await _dbContext.Contacts.AddAsync(contactRecord);
+            _dbContext.SaveChanges();            
+                return new ContactModel(savedContactRecord.Entity);          
            
         }
         public async Task<ContactModel> GetContactById(int id)
         {
             {
-                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status != (int)ContactStatus.Deleted).FirstOrDefaultAsync();
+                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
                 if (contact != null)
                 {
                     return new ContactModel(contact);
@@ -72,7 +65,6 @@ namespace MyPhoneBook.Bll.Services
 
         public async Task<bool> DeleteContact(int id)
         {
-            {
                 var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
 
                 if (contact != null)
@@ -81,9 +73,8 @@ namespace MyPhoneBook.Bll.Services
                     _dbContext.SaveChanges();
                     return true;
                 }
-            }
-
-            return false;
+               
+             return false;
         }
 
         public async Task<ContactModel> UpdateContact(int id, ContactModel contactModel)
@@ -108,8 +99,7 @@ namespace MyPhoneBook.Bll.Services
 
                     return contactModel;
                 }
-
-                return null;
+                return null;          
             }
         }
     }

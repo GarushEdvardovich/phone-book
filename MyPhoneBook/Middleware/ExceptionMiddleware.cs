@@ -5,39 +5,40 @@ using System.Net;
 
 namespace MyPhoneBook
 {
-    public static class ExceptionMiddleware
-    {
-        public static void ConfigureExceptionHandler(this IApplicationBuilder app, IWebHostEnvironment env)
+   
+        public static class ExceptionMiddleware
         {
-            app.UseExceptionHandler(appError =>
+            public static void ConfigureExceptionHandler(this IApplicationBuilder app, IWebHostEnvironment env)
             {
-                appError.Run(async context =>
+                app.UseExceptionHandler(appError =>
                 {
-                    // setting the response code as internal server error.
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    context.Response.ContentType = "application/json";
-
-                    var contextFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-                    if (contextFeature != null)
+                    appError.Run(async context =>
                     {
-                        var ex = contextFeature?.Error;
-                        var isDev = env.IsDevelopment();
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(
-                            // using problem details object to  response to caller
-                            new ProblemDetails
-                            {
-                                Type = ex.GetType().Name,
-                                Status = (int)HttpStatusCode.InternalServerError,
-                                Instance = contextFeature?.Path,
-                                // i am just using generic statement.
-                                // it can be customised based on path or any other condition
-                                Title = isDev ? $"{ex.Message}" : "An error occurred.",
-                                // in case of dev, it returns the complete stack trace.
-                                Detail = isDev ? ex.StackTrace : null
-                            }));
-                    }
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        context.Response.ContentType = "application/json";
+
+                        var contextFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                        if (contextFeature != null)
+                        {
+                            var ex = contextFeature?.Error;
+                            var isDev = env.IsDevelopment();
+                            await context.Response.WriteAsync(JsonConvert.SerializeObject(
+                                new ProblemDetails
+                                {
+
+                                    Type = ex.GetType().Name,
+                                    Status = (int)HttpStatusCode.InternalServerError,
+                                    Instance = contextFeature?.Path,
+                                    Title = isDev ? $"{ex.Message}" : "An internal error occurred.",
+                                    Detail = isDev ? ex.StackTrace : null
+
+                                    //Title = $"{ex.Message}",
+                                    //Detail = ex.StackTrace
+                                }));
+                        }
+                    });
                 });
-            });
+            }
         }
-    }
+   
 }

@@ -40,11 +40,12 @@ namespace MyPhoneBook.Bll.Services
                 }
                 return addressModelList;
             }
-        }
+        }        
 
         public async Task<AddressModel> GetAddressById(int id)
         {
             {
+
                 var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)ContactStatus.Deleted).FirstOrDefaultAsync();
                 if (address != null)
                 {

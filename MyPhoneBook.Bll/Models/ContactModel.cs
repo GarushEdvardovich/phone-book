@@ -29,6 +29,6 @@ namespace MyPhoneBook.Models
         public string SecondaryPhoneNumber { get; set; }
         public string Email { get; set; }      
         public ContactStatus Status { get; set; }
-        public virtual ICollection<Address> Addresses { get; set; }
+   
     }
 }

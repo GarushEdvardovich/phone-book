@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyPhoneBook;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
 using MyPhoneBook.Bll.Services;
 using MyPhoneBook.Controllers.Models;
@@ -18,6 +19,7 @@ builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,7 +30,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+Middleware(app, app.Environment);
+
 
 app.MapControllers();
 
 app.Run();
+void Middleware(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    app.ConfigureExceptionHandler(env);
+}
+
