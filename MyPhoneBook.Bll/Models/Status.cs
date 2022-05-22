@@ -1,6 +1,6 @@
 ﻿namespace MyPhoneBook.Models
 {
-    public enum ContactStatus
+    public enum Status
     {
         Active,
         Deleted

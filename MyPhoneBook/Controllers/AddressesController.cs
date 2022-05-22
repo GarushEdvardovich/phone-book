@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
-using MyPhoneBook.Models;
 using MyPhoneBook.Requests;
 using MyPhoneBook.Response;
 
@@ -14,32 +13,46 @@ namespace MyPhoneBook.Controllers
     {
         private IAddressService _addressService;
         private IContactService _contactService;
-        public AddressesController(IAddressService addressService, IContactService contactService)
+        private readonly ILogger<AddressesController> _logger;
+
+        public AddressesController(IAddressService addressService, IContactService contactService, ILogger<AddressesController> logger)
         {
             _addressService = addressService;
             _contactService = contactService;
+            _logger = logger;
         }
+       
         // GET: api/<AddressesController>
         [HttpGet]
         public async Task<List<AddressResponse>> GetAddresses()
         {
+          
             var addresses = await _addressService.GetAddresses();
-            return AddressResponse.GetResponseList(addresses);           
-        }       
+            return AddressResponse.GetResponseList(addresses);
+        }
 
         // GET api/<AddressesController>/5
         [HttpGet("{id}")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetAddressById(int id)
         {
-            if (id <= 0 )
-            {
+           
+
+            if (id <= 0)
+            {               
                 return BadRequest("id must be positive integer");
             }
+
             var address = await _addressService.GetAddressById(id);
+
             if (address == null)
             {
-                return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
+                return NotFound(); 
+
+               // return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
             }
+
             return Ok(address);
         }
 
@@ -47,48 +60,35 @@ namespace MyPhoneBook.Controllers
         [HttpPost]
         public async Task<ActionResult> AddAddress([FromBody] AddressRequest addressRequest)
         {
-            var address = await _addressService.GetAddressById(addressRequest.Id);
-            
-            if (address == null)                            //mi hat nayel a petq es method @
+            if (addressRequest.Id > 0)
             {
-                var addressInfo = new AddressModel()
-                {                   
-                    City = addressRequest.City,
-                    Street = addressRequest.Street,              
-                    Building = addressRequest.Building,
-                    Apartment = addressRequest.Apartment,
-                };
-               
-                
-                await _addressService.AddAddress(addressInfo);
-                return Ok(addressInfo); 
+                return BadRequest("id cannot be assigned, it`s generated automatically");
             }
-            return BadRequest($"Error message ");            
+           
+            var addedAddress = await _addressService.AddAddress(addressRequest.GetAddressModel());
+            return Ok(addedAddress);
         }
 
-        // PUT api/<AddressesController>/5
+        // PUT api/<AddressesController>
         [HttpPut("{id}")]
         public async Task<ActionResult<AddressResponse>> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
         {
             if (id <= 0)
             {
-                return BadRequest("Id must be positive integer");
+                return BadRequest("id must be positive integer");
             }
-            var address = _addressService.GetAddressById(id);
-            if (address != null)
+            else if (id != addressRequest.Id)
             {
-                var addressModel = new AddressModel()
-                {                   
-                    City = addressRequest.City,
-                    Street = addressRequest.Street,
-                    Building = addressRequest.Building,
-                    Apartment = addressRequest.Apartment,
-                };
-
-                var newAddressModel = await _addressService.UpdateAddressComplete(id, addressModel);
-                return Ok(newAddressModel);
-
+                return BadRequest("id in the body is different from the endpoint id ");
             }
+
+            var updatedAddressModel = await _addressService.UpdateAddress(id, addressRequest.GetAddressModel());
+
+            if (updatedAddressModel != null)
+            {
+                return Ok(updatedAddressModel);
+            }
+
             return StatusCode(StatusCodes.Status400BadRequest, $"address with id {id} not found");
 
         }
@@ -97,15 +97,14 @@ namespace MyPhoneBook.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAddress(int id)
         {
-            if (id<=0)
+            if (id <= 0)
             {
-                return BadRequest("invalid id provided");
+                return BadRequest("id must be positive integer");
             }
-            var result = await _addressService.GetAddressById(id);  
-
+            var result = await _addressService.GetAddressById(id);
             if (result != null)
             {
-               await _addressService.DeleteAddress(id);
+                await _addressService.DeleteAddress(id);
                 return Ok($"address with Id {id} was  successfully deleted.");
             }
             return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not founded");
