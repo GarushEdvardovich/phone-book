@@ -7,7 +7,7 @@
         public string Street { get; set; }
         public string Building { get; set; }
         public string Apartment { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; }       
 
     }
 }

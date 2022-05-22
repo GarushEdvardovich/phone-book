@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyPhoneBook.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyPhoneBook.Requests
@@ -10,13 +11,33 @@ namespace MyPhoneBook.Requests
         [Range(1, int.MaxValue)]
         public int AddressId { get; set; }
         [Required]
+        [StringLength(maximumLength: 30, MinimumLength = 3)]
         public string FirstName { get; set; }
+        [StringLength(maximumLength: 30, MinimumLength = 3)]
         public string LastName { get; set; }
         [Required]
         [Phone]
+        [Range(9, 30)]
         public string PrimaryPhoneNumber { get; set; }
+        [Phone]
+        [Range(9, 30)]
         public string SecondaryPhoneNumber { get; set; }
         [EmailAddress]
         public string Email { get; set; }
+
+        public ContactModel GetContactModel(int id)
+        {
+            return new ContactModel()
+            {
+               Id = this.Id,
+               AddressId = this.AddressId,
+               FirstName = this.FirstName,
+               LastName = this.LastName,
+               PrimaryPhoneNumber = this.PrimaryPhoneNumber,
+               SecondaryPhoneNumber = this.SecondaryPhoneNumber,
+               Email = this.Email,
+
+            };
+        }
     }
 }

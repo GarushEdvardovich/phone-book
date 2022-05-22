@@ -39,7 +39,7 @@ namespace MyPhoneBook.Bll.Services
         public async Task<ContactModel> GetContactById(int id)
         {
             {
-                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
+                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)Status.Active).FirstOrDefaultAsync();
                 if (contact != null)
                 {
                     return new ContactModel(contact);
@@ -51,7 +51,7 @@ namespace MyPhoneBook.Bll.Services
         public async Task<List<ContactModel>> GetContacts()
         {
             {
-                var dbContacts = await _dbContext.Contacts.Where(c => c.Status == (int)ContactStatus.Active).ToListAsync();//.ToList();
+                var dbContacts = await _dbContext.Contacts.Where(c => c.Status == (int)Status.Active).ToListAsync();//.ToList();
                 List<ContactModel> contactModelList = new List<ContactModel>();
                 foreach (var dbContact in dbContacts)
                 {
@@ -65,11 +65,11 @@ namespace MyPhoneBook.Bll.Services
 
         public async Task<bool> DeleteContact(int id)
         {
-                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
+                var contact = await _dbContext.Contacts.Where(c => c.Id == id && c.Status == (int)Status.Active).FirstOrDefaultAsync();
 
                 if (contact != null)
                 {
-                    contact.Status = (int)ContactStatus.Deleted;
+                    contact.Status = (int)Status.Deleted;
                     _dbContext.SaveChanges();
                     return true;
                 }
@@ -85,7 +85,7 @@ namespace MyPhoneBook.Bll.Services
             }
 
             {
-                var contact = await _dbContext.Contacts.Where(_c => _c.Id == id && _c.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
+                var contact = await _dbContext.Contacts.Where(_c => _c.Id == id && _c.Status == (int)Status.Active).FirstOrDefaultAsync();
                 if (contact != null)
                 {
                     contact.AddressId = contactModel.AddressId;

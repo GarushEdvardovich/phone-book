@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
-using MyPhoneBook.Dal.Model;
 using MyPhoneBook.Models;
 
 //TODO: Replace with Interface DBContext
@@ -14,25 +13,20 @@ namespace MyPhoneBook.Bll.Services
         {
             _dbContext = context;
         }
-        public async Task<AddressModel> AddAddress(AddressModel address)
+        public async Task<AddressModel> AddAddress(AddressModel addressModel)
         {
-            var dbAddress = new Address()
-            {                   
-                City = address.City,
-                Street = address.Street,
-                Building = address.Building,
-                Apartment = address.Apartment,
-            };
-            await _dbContext.Addresses.AddAsync(dbAddress);
+           var savedAddressRecord = await _dbContext.Addresses.AddAsync(addressModel.GetAddress());
             _dbContext.SaveChanges();
-            address.Id = dbAddress.Id;
-            return address;
-        }
+            return new AddressModel(savedAddressRecord.Entity);
+         
+        }   
         public async Task<List<AddressModel>> GetAddresses()
         {
             {
+                var dbAddresses = await _dbContext.Contacts.Where(c => c.Status == (int)Status.Active).ToListAsync();
                 var addresses = await _dbContext.Addresses.ToListAsync();
                 List<AddressModel> addressModelList = new List<AddressModel>();
+                
                 foreach (var address in addresses)
                 {
                     var dbAddress = new AddressModel(address);
@@ -40,13 +34,14 @@ namespace MyPhoneBook.Bll.Services
                 }
                 return addressModelList;
             }
-        }        
+        }
 
         public async Task<AddressModel> GetAddressById(int id)
         {
             {
 
-                var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)ContactStatus.Deleted).FirstOrDefaultAsync();
+                var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)Status.Deleted).FirstOrDefaultAsync();
+                
                 if (address != null)
                 {
                     return new AddressModel(address);
@@ -54,14 +49,13 @@ namespace MyPhoneBook.Bll.Services
                 return null;
             }
         }
-        public async Task<AddressModel> UpdateAddressComplete(int id, AddressModel updatedAddressModel)
+        public async Task<AddressModel> UpdateAddress(int id, AddressModel updatedAddressModel)
         {
-            {
-                // var getRecord = _addressService.GetAddressById(id);
-                var oldAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
+            {               
+                var oldAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)Status.Active).FirstOrDefaultAsync();
+                
                 if (oldAddress != null)
                 {
-                    // oldAddress.Id = id;                    
                     oldAddress.City = updatedAddressModel.City;
                     oldAddress.Street = updatedAddressModel.Street;
                     oldAddress.Building = updatedAddressModel.Building;
@@ -76,10 +70,11 @@ namespace MyPhoneBook.Bll.Services
         public async Task<bool> DeleteAddress(int id)
         {
             {
-                var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)ContactStatus.Active).FirstOrDefaultAsync();
+                var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)Status.Active).FirstOrDefaultAsync();
+                
                 if (address != null)
                 {
-                    address.Status = (int)ContactStatus.Deleted;
+                    address.Status = (int)Status.Deleted;
                     _dbContext.SaveChanges();
                     return true;
                 }

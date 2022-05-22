@@ -1,5 +1,4 @@
 ﻿using MyPhoneBook.Dal.Model;
-using System.ComponentModel.DataAnnotations;
 
 namespace MyPhoneBook.Models
 {
@@ -17,18 +16,32 @@ namespace MyPhoneBook.Models
             PrimaryPhoneNumber = contact.PrimaryPhoneNumber;
             SecondaryPhoneNumber = contact.SecondaryPhoneNumber;
             Email = contact.Email;
-            Status = (ContactStatus)(int)contact.Status;            
+            Status = (Status)(int)contact.Status;
 
         }
+        public Contact GetContact(ContactModel contactModel)
+        {
+            return new Contact()
 
+            {
+                Id = contactModel.Id,
+                AddressId = contactModel.AddressId,
+                FirstName = contactModel.FirstName,
+                LastName = contactModel.LastName,
+                PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber,
+                SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber,
+                Email = contactModel.Email
+            };
+        }
         public int Id { get; set; }
         public int AddressId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PrimaryPhoneNumber { get; set; }
         public string SecondaryPhoneNumber { get; set; }
-        public string Email { get; set; }      
-        public ContactStatus Status { get; set; }
-   
+        public string Email { get; set; }
+        public Status Status { get; set; }
     }
 }
+
+

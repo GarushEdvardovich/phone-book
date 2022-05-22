@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using MyPhoneBook;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
@@ -32,12 +33,14 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 Middleware(app, app.Environment);
 
-
+app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
+
 void Middleware(IApplicationBuilder app, IWebHostEnvironment env)
 {
+    //app.UseStatusCodePagesWithReExecute("/Error");
     app.ConfigureExceptionHandler(env);
+
 }
 
