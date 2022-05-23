@@ -16,7 +16,7 @@ namespace MyPhoneBook.Models
             PrimaryPhoneNumber = contact.PrimaryPhoneNumber;
             SecondaryPhoneNumber = contact.SecondaryPhoneNumber;
             Email = contact.Email;
-            Status = (Status)(int)contact.Status;
+
 
         }
         public Contact GetContact(ContactModel contactModel)
@@ -40,7 +40,7 @@ namespace MyPhoneBook.Models
         public string PrimaryPhoneNumber { get; set; }
         public string SecondaryPhoneNumber { get; set; }
         public string Email { get; set; }
-        public Status Status { get; set; }
+
     }
 }
 

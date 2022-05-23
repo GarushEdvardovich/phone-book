@@ -4,6 +4,7 @@ using MyPhoneBook;
 using MyPhoneBook.Bll.IMyPhoneBookServices;
 using MyPhoneBook.Bll.Services;
 using MyPhoneBook.Controllers.Models;
+using MyPhoneBook.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();    
 }
 
+
 app.UseAuthorization();
 Middleware(app, app.Environment);
 
@@ -40,6 +42,8 @@ app.Run();
 void Middleware(IApplicationBuilder app, IWebHostEnvironment env)
 {    
     app.UseStatusCodePagesWithReExecute("/Error");
+   // app.UseMiddleware<LoggingMiddleware>();
+    app.UseMiddleware<StatusCodePagesMiddleware>();
     app.ConfigureExceptionHandler(env);
+    
 }
-

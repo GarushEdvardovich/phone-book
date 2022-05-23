@@ -23,11 +23,10 @@ namespace MyPhoneBook.Controllers
 
         // GET: api/<ContactController>
         [HttpGet]
-        public async Task<List<ContactResponse>> GetContacts()
+        public async Task<IActionResult> GetContacts()
         {
             var contactModelList = await _contactInfoService.GetContacts();
-            var contactResponseList = ContactResponse.GetResponseList(contactModelList);
-            return contactResponseList;
+            return Ok(contactModelList);
         }
 
 
@@ -95,16 +94,19 @@ namespace MyPhoneBook.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
+
             if (id <= 0)
             {
                 return BadRequest("invalid id provided");
             }
-            var result = await _contactInfoService.GetContactById(id);
-            if (result != null)
-            {
-                await _contactInfoService.DeleteContact(id);
+
+            var result = await _contactInfoService.DeleteContact(id);
+
+            if (result)
+            {                
                 return Ok($"contact with Id {id} was  successfully deleted.");
             }
+
             return StatusCode(StatusCodes.Status404NotFound, $"contact with id {id} not founded");
         }
     }

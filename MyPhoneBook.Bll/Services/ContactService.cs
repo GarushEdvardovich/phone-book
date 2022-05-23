@@ -28,11 +28,10 @@ namespace MyPhoneBook.Bll.Services
                 PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber,
                 SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber,
                 Email = contactModel.Email,
-                Status = (int)contactModel.Status,
             };
 
             var savedContactRecord = await _dbContext.Contacts.AddAsync(contactRecord);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return new ContactModel(savedContactRecord.Entity);
 
         }
@@ -70,7 +69,7 @@ namespace MyPhoneBook.Bll.Services
             if (contact != null)
             {
                 contact.Status = (int)Status.Deleted;
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
                 return true;
             }
 
@@ -90,7 +89,7 @@ namespace MyPhoneBook.Bll.Services
                 contact.PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber;
                 contact.SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber;
                 contact.Email = contactModel.Email;
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
                 contactModel.Id = contact.Id;
                 return contactModel;
             }

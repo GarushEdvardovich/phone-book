@@ -16,7 +16,7 @@ namespace MyPhoneBook.Bll.Services
         public async Task<AddressModel> AddAddress(AddressModel addressModel)
         {
            var savedAddressRecord = await _dbContext.Addresses.AddAsync(addressModel.GetAddress());
-            _dbContext.SaveChanges();
+           await _dbContext.SaveChangesAsync();
             return new AddressModel(savedAddressRecord.Entity);
          
         }   
@@ -60,7 +60,7 @@ namespace MyPhoneBook.Bll.Services
                     currentAddress.Street = updatedAddressModel.Street;
                     currentAddress.Building = updatedAddressModel.Building;
                     currentAddress.Apartment = updatedAddressModel.Apartment;
-                    _dbContext.SaveChanges();
+                    await _dbContext.SaveChangesAsync();
                     return updatedAddressModel;
                 }
                 return null;
@@ -74,7 +74,7 @@ namespace MyPhoneBook.Bll.Services
                 if (address != null)
                 {
                     address.Status = (int)Status.Deleted;
-                    _dbContext.SaveChanges();
+                    await _dbContext.SaveChangesAsync();
                     return true;
                 }
 
