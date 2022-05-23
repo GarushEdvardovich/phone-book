@@ -39,7 +39,11 @@ namespace MyPhoneBook.Controllers.Models
         void IMyPhoneBookContext.SaveChanges()
         {
             SaveChanges();
-        }       
+        }
+        void IMyPhoneBookContext.SaveChangesAsync()
+        {
+            SaveChangesAsync();
+        }
     }
 
 }

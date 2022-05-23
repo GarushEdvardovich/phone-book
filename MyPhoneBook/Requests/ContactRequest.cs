@@ -6,7 +6,7 @@ namespace MyPhoneBook.Requests
 {    
     public class ContactRequest
     {
-        [Required]               
+        [Range(0, int.MaxValue)]
         public int Id { get; set; }  
         [Range(1, int.MaxValue)]
         public int AddressId { get; set; }
@@ -17,27 +17,39 @@ namespace MyPhoneBook.Requests
         public string LastName { get; set; }
         [Required]
         [Phone]
-        [Range(9, 30)]
         public string PrimaryPhoneNumber { get; set; }
         [Phone]
-        [Range(9, 30)]
         public string SecondaryPhoneNumber { get; set; }
         [EmailAddress]
         public string Email { get; set; }
 
-        public ContactModel GetContactModel(int id)
+        public ContactModel GetPostContactModel()
         {
             return new ContactModel()
             {
-               Id = this.Id,
-               AddressId = this.AddressId,
-               FirstName = this.FirstName,
-               LastName = this.LastName,
-               PrimaryPhoneNumber = this.PrimaryPhoneNumber,
-               SecondaryPhoneNumber = this.SecondaryPhoneNumber,
-               Email = this.Email,
-
+                Id = 0,
+                AddressId = AddressId,
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                PrimaryPhoneNumber = this.PrimaryPhoneNumber,
+                SecondaryPhoneNumber = this.SecondaryPhoneNumber,
+                Email = this.Email,
             };
+
+        }
+
+        public ContactModel GetPutContactModel()
+        {
+            return new ContactModel()
+            {
+                Id = this.Id,
+                AddressId = this.AddressId,
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                PrimaryPhoneNumber = this.PrimaryPhoneNumber,
+                SecondaryPhoneNumber = this.SecondaryPhoneNumber,
+            };
+
         }
     }
 }

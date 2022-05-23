@@ -21,7 +21,7 @@ namespace MyPhoneBook
                     if (contextFeature != null)
                     {
                         var ex = contextFeature?.Error;
-                        var isDev = /*false;*/  env.IsDevelopment();
+                        var isDev = false; env.IsDevelopment();
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(
                             new ProblemDetails
                             {

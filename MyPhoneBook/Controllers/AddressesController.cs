@@ -3,8 +3,6 @@ using MyPhoneBook.Bll.IMyPhoneBookServices;
 using MyPhoneBook.Requests;
 using MyPhoneBook.Response;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace MyPhoneBook.Controllers
 {
     [Route("api/[controller]")]
@@ -12,33 +10,27 @@ namespace MyPhoneBook.Controllers
     public class AddressesController : ControllerBase
     {
         private IAddressService _addressService;
-        private IContactService _contactService;
         private readonly ILogger<AddressesController> _logger;
 
-        public AddressesController(IAddressService addressService, IContactService contactService, ILogger<AddressesController> logger)
+        public AddressesController(IAddressService addressService, ILogger<AddressesController> logger)
         {
             _addressService = addressService;
-            _contactService = contactService;
             _logger = logger;
         }
        
         // GET: api/<AddressesController>
         [HttpGet]
         public async Task<List<AddressResponse>> GetAddresses()
-        {
-          
-            var addresses = await _addressService.GetAddresses();
-            return AddressResponse.GetResponseList(addresses);
+        {         
+            
+            var addresses = await _addressService.GetAddresses();           
+            return AddressResponse.GetResponseList(addresses);           
         }
 
         // GET api/<AddressesController>/5
         [HttpGet("{id}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> GetAddressById(int id)
+        public async Task<IActionResult> GetAddressById(int id)
         {
-           
-
             if (id <= 0)
             {               
                 return BadRequest("id must be positive integer");
@@ -52,20 +44,19 @@ namespace MyPhoneBook.Controllers
 
                // return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
             }
+           
 
-            return Ok(address);
+           return Ok(address);
         }
 
         // POST api/<AddressesController>
         [HttpPost]
         public async Task<ActionResult> AddAddress([FromBody] AddressRequest addressRequest)
-        {
-            if (addressRequest.Id > 0)
-            {
-                return BadRequest("id cannot be assigned, it`s generated automatically");
-            }
-           
-            var addedAddress = await _addressService.AddAddress(addressRequest.GetAddressModel());
+        {   
+            
+            var addedAddress = await _addressService.AddAddress(addressRequest.GetPostAddressModel());
+
+
             return Ok(addedAddress);
         }
 
@@ -82,7 +73,7 @@ namespace MyPhoneBook.Controllers
                 return BadRequest("id in the body is different from the endpoint id ");
             }
 
-            var updatedAddressModel = await _addressService.UpdateAddress(id, addressRequest.GetAddressModel());
+            var updatedAddressModel = await _addressService.UpdateAddress(id, addressRequest.GetPutAddressModel());
 
             if (updatedAddressModel != null)
             {
@@ -90,6 +81,7 @@ namespace MyPhoneBook.Controllers
             }
 
             return StatusCode(StatusCodes.Status400BadRequest, $"address with id {id} not found");
+
 
         }
 
@@ -101,12 +93,14 @@ namespace MyPhoneBook.Controllers
             {
                 return BadRequest("id must be positive integer");
             }
-            var result = await _addressService.GetAddressById(id);
-            if (result != null)
+           
+               var result = await _addressService.DeleteAddress(id);
+
+            if (result)
             {
-                await _addressService.DeleteAddress(id);
                 return Ok($"address with Id {id} was  successfully deleted.");
             }
+
             return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not founded");
         }
     }
