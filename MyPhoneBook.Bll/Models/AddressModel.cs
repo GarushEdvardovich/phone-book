@@ -16,7 +16,7 @@ namespace MyPhoneBook.Models
         }
         public Address GetAddress()
         {
-            return new Address(/*addressModel*/)
+            return new Address()
             {
                 Id = this.Id,
                 City = this.City,
@@ -25,6 +25,7 @@ namespace MyPhoneBook.Models
                 Apartment = this.Apartment,
             };
         }
+
 
         public int Id { get; set; }
         public string City { get; set; }

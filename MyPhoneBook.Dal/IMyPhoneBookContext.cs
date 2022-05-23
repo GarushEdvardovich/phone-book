@@ -8,5 +8,6 @@ namespace MyPhoneBook.Bll.IMyPhoneBookServices
         DbSet<Contact> Contacts { get; set; }
         DbSet<Address> Addresses { get; set; }
         void SaveChanges();
+        void SaveChangesAsync();
     }
 }

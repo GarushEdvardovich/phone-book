@@ -1,17 +1,18 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace MyPhoneBook.Controllers
-//{
-//    //[Route("api/[controller]")]
-//    [Route("/Error")]
-//    //[ApiController]
-//    //[Produces("application/json")]
-//    public class ErrorController : ControllerBase
-//    {
-//        public IActionResult Index(int statusCode)
-//        {
-//            return NotFound(); /*Json(new { statusCode = Response.StatusCode })*/;
-//        }
-//    }
-//}
+namespace MyPhoneBook.Controllers
+{
+    [Route("/Error")]
+    public class ErrorController : ControllerBase
+    {
+        [HttpGet]
+        public IActionResult Error(int statusCode)
+        {
+
+            return NotFound(); /*Json(new { statusCode = Response.StatusCode })*/
+
+           
+        }
+    }
+}

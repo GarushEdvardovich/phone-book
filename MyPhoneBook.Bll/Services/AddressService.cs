@@ -23,16 +23,16 @@ namespace MyPhoneBook.Bll.Services
         public async Task<List<AddressModel>> GetAddresses()
         {
             {
-                var dbAddresses = await _dbContext.Contacts.Where(c => c.Status == (int)Status.Active).ToListAsync();
-                var addresses = await _dbContext.Addresses.ToListAsync();
+                var dbAddresses = await _dbContext.Addresses.Where(a => a.Status == (int)Status.Active).ToListAsync();                
                 List<AddressModel> addressModelList = new List<AddressModel>();
                 
-                foreach (var address in addresses)
+                foreach (var dbAddress in dbAddresses)
                 {
-                    var dbAddress = new AddressModel(address);
-                    addressModelList.Add(dbAddress);
+                    var addressModel = new AddressModel(dbAddress);
+                    addressModelList.Add(addressModel);
                 }
                 return addressModelList;
+               
             }
         }
 
@@ -52,16 +52,15 @@ namespace MyPhoneBook.Bll.Services
         public async Task<AddressModel> UpdateAddress(int id, AddressModel updatedAddressModel)
         {
             {               
-                var oldAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)Status.Active).FirstOrDefaultAsync();
+                var currentAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)Status.Active).FirstOrDefaultAsync();
                 
-                if (oldAddress != null)
+                if (currentAddress != null)
                 {
-                    oldAddress.City = updatedAddressModel.City;
-                    oldAddress.Street = updatedAddressModel.Street;
-                    oldAddress.Building = updatedAddressModel.Building;
-                    oldAddress.Apartment = updatedAddressModel.Apartment;
+                    currentAddress.City = updatedAddressModel.City;
+                    currentAddress.Street = updatedAddressModel.Street;
+                    currentAddress.Building = updatedAddressModel.Building;
+                    currentAddress.Apartment = updatedAddressModel.Apartment;
                     _dbContext.SaveChanges();
-                    updatedAddressModel.Id = id;
                     return updatedAddressModel;
                 }
                 return null;

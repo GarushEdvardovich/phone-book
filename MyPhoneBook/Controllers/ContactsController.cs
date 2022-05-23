@@ -54,12 +54,12 @@ namespace MyPhoneBook.Controllers
         // POST api/<ContactController>
         [HttpPost]
         public async Task<ActionResult> AddContact([FromBody] ContactRequest contactRequest)
-        {
+        {            
             if (contactRequest.Id > 0)
             {
                 return BadRequest("id cannot be assigned, it`s generated automatically");
             }
-            var addedcontact = await _contactInfoService.AddContact(contactRequest.GetContactModel(contactRequest.Id));
+            var addedcontact = await _contactInfoService.AddContact(contactRequest.GetPostContactModel());
             return Ok(addedcontact);         
         }
        
@@ -70,16 +70,16 @@ namespace MyPhoneBook.Controllers
         public async Task<ActionResult> UpdateContact(int id, [FromBody] ContactRequest contactRequest)
 
         {
-            if (id <= 0)
+            if (string.IsNullOrWhiteSpace(contactRequest.FirstName))
             {
-                return BadRequest("id must be positive integer");
+                return BadRequest("First name in the contact is mandatory.");
             }
-            else if (id != contactRequest.Id)
+            if (id != contactRequest.Id)
             {
                 return BadRequest("id in the body is different from the endpoint id ");
             }
 
-            var updatedContactModel = await _contactInfoService.UpdateContact(id, contactRequest.GetContactModel(contactRequest.Id));
+            var updatedContactModel = await _contactInfoService.UpdateContact(id, contactRequest.GetPutContactModel());
             
             if (updatedContactModel != null)
             {
@@ -87,8 +87,7 @@ namespace MyPhoneBook.Controllers
             }
 
             return StatusCode(StatusCodes.Status400BadRequest, $"contact with id {id} not found");
-
-
+           
 
         }
 
