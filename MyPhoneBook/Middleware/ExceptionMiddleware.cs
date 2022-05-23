@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
+using log4net;
 
 namespace MyPhoneBook
 {
@@ -21,6 +22,7 @@ namespace MyPhoneBook
                     if (contextFeature != null)
                     {
                         var ex = contextFeature?.Error;
+
                         var isDev = false; env.IsDevelopment();
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(
                             new ProblemDetails
@@ -29,7 +31,7 @@ namespace MyPhoneBook
                                 Type = ex.GetType().Name,
                                 Status = (int)HttpStatusCode.InternalServerError,
                                 Instance = contextFeature?.Path,
-                                Title = isDev ? $"{ex.Message}" : "Haziv hasav stex.",
+                                Title = isDev ? $"{ex.Message}" : " ",
                                 Detail = isDev ? ex.StackTrace : null
 
                                 //Title = $"{ex.Message}",

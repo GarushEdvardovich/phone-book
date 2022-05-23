@@ -32,6 +32,6 @@ namespace MyPhoneBook.Models
         public string Street { get; set; }
         public string Building { get; set; }
         public string Apartment { get; set; }
-      //  public Status Status  { get; set; } delete i hamara petq
+       // public Status Status  { get; set; }
     }
 }

@@ -17,14 +17,13 @@ namespace MyPhoneBook.Controllers
             _addressService = addressService;
             _logger = logger;
         }
-       
+
         // GET: api/<AddressesController>
         [HttpGet]
-        public async Task<List<AddressResponse>> GetAddresses()
-        {         
-            
-            var addresses = await _addressService.GetAddresses();           
-            return AddressResponse.GetResponseList(addresses);           
+        public async Task<IActionResult> GetAddresses()
+        {
+            var addresses = await _addressService.GetAddresses();
+            return Ok(AddressResponse.GetResponseList(addresses));
         }
 
         // GET api/<AddressesController>/5
@@ -32,7 +31,7 @@ namespace MyPhoneBook.Controllers
         public async Task<IActionResult> GetAddressById(int id)
         {
             if (id <= 0)
-            {               
+            {
                 return BadRequest("id must be positive integer");
             }
 
@@ -40,20 +39,20 @@ namespace MyPhoneBook.Controllers
 
             if (address == null)
             {
-                return NotFound(); 
+                return StatusCode(404);
 
-               // return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
+                // return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
             }
-           
 
-           return Ok(address);
+
+            return Ok(address);
         }
 
         // POST api/<AddressesController>
         [HttpPost]
-        public async Task<ActionResult> AddAddress([FromBody] AddressRequest addressRequest)
-        {   
-            
+        public async Task<IActionResult> AddAddress([FromBody] AddressRequest addressRequest)
+        {
+
             var addedAddress = await _addressService.AddAddress(addressRequest.GetPostAddressModel());
 
 
@@ -62,7 +61,7 @@ namespace MyPhoneBook.Controllers
 
         // PUT api/<AddressesController>
         [HttpPut("{id}")]
-        public async Task<ActionResult<AddressResponse>> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
+        public async Task<IActionResult/*<AddressResponse>*/> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
         {
             if (id <= 0)
             {
@@ -87,14 +86,14 @@ namespace MyPhoneBook.Controllers
 
         // DELETE api/<AddressesController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAddress(int id)
+        public async Task<IActionResult> DeleteAddress(int id)
         {
             if (id <= 0)
             {
                 return BadRequest("id must be positive integer");
             }
-           
-               var result = await _addressService.DeleteAddress(id);
+
+            var result = await _addressService.DeleteAddress(id);
 
             if (result)
             {
