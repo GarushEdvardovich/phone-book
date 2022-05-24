@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace MyPhoneBook.Requests
 {
     public class AddressRequest
-    {              
+    {   [Range (0, int.MaxValue)]        
         public int Id { get; set; }
         public string City { get; set; }
         public string Street { get; set; }

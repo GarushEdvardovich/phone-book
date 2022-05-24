@@ -3,9 +3,16 @@
 namespace MyPhoneBook.Models
 {
     public class AddressModel
-    {
+    {        
+        public int Id { get; set; }
+        public string City { get; set; }
+        public string Street { get; set; }
+        public string Building { get; set; }
+        public string Apartment { get; set; }
+
         public AddressModel()
         { }
+
         public AddressModel(Address address)
         {
             Id = address.Id;
@@ -13,6 +20,7 @@ namespace MyPhoneBook.Models
             Street = address.Street;
             Building = address.Building;
             Apartment = address.Apartment;
+
         }
         public Address GetAddress()
         {
@@ -23,15 +31,11 @@ namespace MyPhoneBook.Models
                 Street = this.Street,
                 Building = this.Building,
                 Apartment = this.Apartment,
+
             };
         }
 
 
-        public int Id { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
-        public string Building { get; set; }
-        public string Apartment { get; set; }
-       // public Status Status  { get; set; }
+
     }
 }

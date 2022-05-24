@@ -23,7 +23,7 @@ namespace MyPhoneBook
                     {
                         var ex = contextFeature?.Error;
 
-                        var isDev = false; env.IsDevelopment();
+                        var isDev = env.IsDevelopment();
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(
                             new ProblemDetails
                             {
@@ -34,8 +34,7 @@ namespace MyPhoneBook
                                 Title = isDev ? $"{ex.Message}" : " ",
                                 Detail = isDev ? ex.StackTrace : null
 
-                                //Title = $"{ex.Message}",
-                                //Detail = ex.StackTrace
+                               
                             }));
                     }
                 });

@@ -41,10 +41,9 @@ namespace MyPhoneBook.Controllers.Models
             SaveChanges();
         }
        async Task<int> IMyPhoneBookContext.SaveChangesAsync()
-        {
-          return await SaveChangesAsync();
-          
-        }
+       {
+         return await SaveChangesAsync();          
+       }
     }
 
 }

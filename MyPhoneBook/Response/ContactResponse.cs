@@ -29,11 +29,13 @@ namespace MyPhoneBook.Response
         public static List<ContactResponse> GetResponseList(List<ContactModel> contactModels)
         {
             List<ContactResponse> contacts = new List<ContactResponse>();
+
             foreach (var contactModel in contactModels)
             {
                 var contactResponse = new ContactResponse(contactModel);
                 contacts.Add(contactResponse);
             }
+
             return contacts;
         }
     }

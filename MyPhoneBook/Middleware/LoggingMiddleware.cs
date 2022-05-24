@@ -24,7 +24,7 @@ namespace MyPhoneBook
             {
                 _logger.LogInformation($"Request: {context.Request.Path}");
 
-              //  _next(context);
+               await _next(context);
 
             }
             catch (Exception ex)

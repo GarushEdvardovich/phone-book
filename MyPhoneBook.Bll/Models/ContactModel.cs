@@ -4,6 +4,14 @@ namespace MyPhoneBook.Models
 {
     public class ContactModel
     {
+        public int Id { get; set; }
+        public int AddressId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PrimaryPhoneNumber { get; set; }
+        public string SecondaryPhoneNumber { get; set; }
+        public string Email { get; set; }
+
         public ContactModel()
         { }
 
@@ -17,8 +25,8 @@ namespace MyPhoneBook.Models
             SecondaryPhoneNumber = contact.SecondaryPhoneNumber;
             Email = contact.Email;
 
-
         }
+
         public Contact GetContact(ContactModel contactModel)
         {
             return new Contact()
@@ -31,16 +39,9 @@ namespace MyPhoneBook.Models
                 PrimaryPhoneNumber = contactModel.PrimaryPhoneNumber,
                 SecondaryPhoneNumber = contactModel.SecondaryPhoneNumber,
                 Email = contactModel.Email
+
             };
         }
-        public int Id { get; set; }
-        public int AddressId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PrimaryPhoneNumber { get; set; }
-        public string SecondaryPhoneNumber { get; set; }
-        public string Email { get; set; }
-
     }
 }
 

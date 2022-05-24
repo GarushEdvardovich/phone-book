@@ -33,12 +33,13 @@ namespace MyPhoneBook.Controllers
         // GET api/<ContactController>/5
         [HttpGet("{id}")]
 
-        public async Task<ActionResult> GetContact(int id)
+        public async Task<IActionResult> GetContact(int id)
         {
             if (id <= 0)
             {
                 return BadRequest("id must be positive integer");
             }
+
             var contact = await _contactInfoService.GetContactById(id);
 
             if (contact == null)
@@ -52,13 +53,15 @@ namespace MyPhoneBook.Controllers
 
         // POST api/<ContactController>
         [HttpPost]
-        public async Task<ActionResult> AddContact([FromBody] ContactRequest contactRequest)
+        public async Task<IActionResult> AddContact([FromBody] ContactRequest contactRequest)
         {            
             if (contactRequest.Id > 0)
             {
-                return BadRequest("id cannot be assigned, it`s generated automatically");
+                return BadRequest("id cannot be assigned, it`s generated automatically, id mast be 0 ");
             }
+
             var addedcontact = await _contactInfoService.AddContact(contactRequest.GetPostContactModel());
+
             return Ok(addedcontact);         
         }
        
@@ -66,13 +69,14 @@ namespace MyPhoneBook.Controllers
 
         // PUT api/<ContactController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateContact(int id, [FromBody] ContactRequest contactRequest)
+        public async Task<IActionResult> UpdateContact(int id, [FromBody] ContactRequest contactRequest)
 
         {
             if (string.IsNullOrWhiteSpace(contactRequest.FirstName))
             {
                 return BadRequest("First name in the contact is mandatory.");
             }
+
             if (id != contactRequest.Id)
             {
                 return BadRequest("id in the body is different from the endpoint id ");
@@ -85,14 +89,13 @@ namespace MyPhoneBook.Controllers
                 return Ok(updatedContactModel);
             }
 
-            return StatusCode(StatusCodes.Status400BadRequest, $"contact with id {id} not found");
-           
+            return StatusCode(StatusCodes.Status400BadRequest, $"contact with id {id} not found");           
 
         }
 
         // DELETE api/<ContactController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
 
             if (id <= 0)

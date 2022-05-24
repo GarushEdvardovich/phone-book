@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MyPhoneBook.Models;
-
-
+﻿using MyPhoneBook.Models;
 
 
 namespace MyPhoneBook.Bll.IMyPhoneBookServices
@@ -13,5 +10,5 @@ namespace MyPhoneBook.Bll.IMyPhoneBookServices
         Task<AddressModel> GetAddressById(int id);
         Task<AddressModel> UpdateAddress(int id, AddressModel updatedAddressModel);
         Task<bool> DeleteAddress(int id);
-     }   
+    }
 }

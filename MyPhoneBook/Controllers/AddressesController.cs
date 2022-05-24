@@ -21,8 +21,9 @@ namespace MyPhoneBook.Controllers
         // GET: api/<AddressesController>
         [HttpGet]
         public async Task<IActionResult> GetAddresses()
-        {
+        {           
             var addresses = await _addressService.GetAddresses();
+           
             return Ok(AddressResponse.GetResponseList(addresses));
         }
 
@@ -41,9 +42,7 @@ namespace MyPhoneBook.Controllers
             {
                 return StatusCode(404);
 
-                // return StatusCode(StatusCodes.Status404NotFound, $"address with id {id} not found");
             }
-
 
             return Ok(address);
         }
@@ -52,16 +51,19 @@ namespace MyPhoneBook.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAddress([FromBody] AddressRequest addressRequest)
         {
+            if (addressRequest.Id>0)
+            {
+                return BadRequest("id cannot be assigned, it`s generated automatically,it mast be 0");
+            }
 
             var addedAddress = await _addressService.AddAddress(addressRequest.GetPostAddressModel());
-
 
             return Ok(addedAddress);
         }
 
         // PUT api/<AddressesController>
         [HttpPut("{id}")]
-        public async Task<IActionResult/*<AddressResponse>*/> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
+        public async Task<IActionResult> UpdateAddress(int id, [FromBody] AddressRequest addressRequest)
         {
             if (id <= 0)
             {
@@ -80,7 +82,6 @@ namespace MyPhoneBook.Controllers
             }
 
             return StatusCode(StatusCodes.Status400BadRequest, $"address with id {id} not found");
-
 
         }
 
