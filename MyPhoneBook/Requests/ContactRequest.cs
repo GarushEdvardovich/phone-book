@@ -48,6 +48,7 @@ namespace MyPhoneBook.Requests
                 LastName = this.LastName,
                 PrimaryPhoneNumber = this.PrimaryPhoneNumber,
                 SecondaryPhoneNumber = this.SecondaryPhoneNumber,
+                Email= this.Email,  
             };
 
         }

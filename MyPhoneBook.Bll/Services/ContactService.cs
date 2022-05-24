@@ -3,13 +3,11 @@ using MyPhoneBook.Bll.IMyPhoneBookServices;
 using MyPhoneBook.Dal.Model;
 using MyPhoneBook.Models;
 
-//TODO: Replace with Interface DBContext
 
 namespace MyPhoneBook.Bll.Services
 {
     public class ContactService : IContactService
     {
-        //TO DO: If a record with same FirstName and/or Primary Phone Number exists and is with status Deleted we can recover it.
         private readonly IMyPhoneBookContext _dbContext;
         public ContactService(IMyPhoneBookContext context)
         {
@@ -18,6 +16,7 @@ namespace MyPhoneBook.Bll.Services
 
         public async Task<ContactModel> AddContact(ContactModel contactModel)
         {
+
 
             var contactRecord = new Contact()
             {
@@ -32,8 +31,8 @@ namespace MyPhoneBook.Bll.Services
 
             var savedContactRecord = await _dbContext.Contacts.AddAsync(contactRecord);
             await _dbContext.SaveChangesAsync();
-            return new ContactModel(savedContactRecord.Entity);
 
+            return new ContactModel(savedContactRecord.Entity);
         }
         public async Task<ContactModel> GetContactById(int id)
         {
@@ -43,6 +42,7 @@ namespace MyPhoneBook.Bll.Services
                 {
                     return new ContactModel(contact);
                 }
+
                 return null;
             }
         }
@@ -52,12 +52,13 @@ namespace MyPhoneBook.Bll.Services
             {
                 var dbContacts = await _dbContext.Contacts.Where(c => c.Status == (int)Status.Active).ToListAsync();
                 List<ContactModel> contactModelList = new List<ContactModel>();
+
                 foreach (var dbContact in dbContacts)
                 {
                     var contactModel = new ContactModel(dbContact);
                     contactModelList.Add(contactModel);
-
                 }
+
                 return contactModelList;
             }
         }
@@ -70,6 +71,7 @@ namespace MyPhoneBook.Bll.Services
             {
                 contact.Status = (int)Status.Deleted;
                 await _dbContext.SaveChangesAsync();
+
                 return true;
             }
 
@@ -78,9 +80,8 @@ namespace MyPhoneBook.Bll.Services
 
         public async Task<ContactModel> UpdateContact(int id, ContactModel contactModel)
         {
-
-
             var contact = await _dbContext.Contacts.Where(_c => _c.Id == id && _c.Status == (int)Status.Active).FirstOrDefaultAsync();
+
             if (contact != null)
             {
                 contact.AddressId = contactModel.AddressId;
@@ -91,11 +92,11 @@ namespace MyPhoneBook.Bll.Services
                 contact.Email = contactModel.Email;
                 await _dbContext.SaveChangesAsync();
                 contactModel.Id = contact.Id;
+
                 return contactModel;
             }
+
             return null;
-
-
         }
     }
 }

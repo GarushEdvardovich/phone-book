@@ -2,7 +2,6 @@
 using MyPhoneBook.Bll.IMyPhoneBookServices;
 using MyPhoneBook.Models;
 
-//TODO: Replace with Interface DBContext
 
 namespace MyPhoneBook.Bll.Services
 {
@@ -15,24 +14,24 @@ namespace MyPhoneBook.Bll.Services
         }
         public async Task<AddressModel> AddAddress(AddressModel addressModel)
         {
-           var savedAddressRecord = await _dbContext.Addresses.AddAsync(addressModel.GetAddress());
-           await _dbContext.SaveChangesAsync();
+            var savedAddressRecord = await _dbContext.Addresses.AddAsync(addressModel.GetAddress());
+            await _dbContext.SaveChangesAsync();
+
             return new AddressModel(savedAddressRecord.Entity);
-         
-        }   
+        }
         public async Task<List<AddressModel>> GetAddresses()
         {
             {
-                var dbAddresses = await _dbContext.Addresses.Where(a => a.Status == (int)Status.Active).ToListAsync();                
+                var dbAddresses = await _dbContext.Addresses.Where(a => a.Status == (int)Status.Active).ToListAsync();
                 List<AddressModel> addressModelList = new List<AddressModel>();
-                
+
                 foreach (var dbAddress in dbAddresses)
                 {
                     var addressModel = new AddressModel(dbAddress);
                     addressModelList.Add(addressModel);
                 }
+
                 return addressModelList;
-               
             }
         }
 
@@ -41,19 +40,20 @@ namespace MyPhoneBook.Bll.Services
             {
 
                 var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status != (int)Status.Deleted).FirstOrDefaultAsync();
-                
+
                 if (address != null)
                 {
                     return new AddressModel(address);
                 }
+
                 return null;
             }
         }
         public async Task<AddressModel> UpdateAddress(int id, AddressModel updatedAddressModel)
         {
-            {               
+            {
                 var currentAddress = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)Status.Active).FirstOrDefaultAsync();
-                
+
                 if (currentAddress != null)
                 {
                     currentAddress.City = updatedAddressModel.City;
@@ -63,6 +63,7 @@ namespace MyPhoneBook.Bll.Services
                     await _dbContext.SaveChangesAsync();
                     return updatedAddressModel;
                 }
+
                 return null;
             }
         }
@@ -70,15 +71,15 @@ namespace MyPhoneBook.Bll.Services
         {
             {
                 var address = await _dbContext.Addresses.Where(a => a.Id == id && a.Status == (int)Status.Active).FirstOrDefaultAsync();
-                
+
                 if (address != null)
                 {
                     address.Status = (int)Status.Deleted;
                     await _dbContext.SaveChangesAsync();
                     return true;
                 }
-
             }
+
             return false;
         }
 

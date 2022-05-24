@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MyPhoneBook.Dal.Migrations
 {
-    public partial class _999 : Migration
+    public partial class _777999 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

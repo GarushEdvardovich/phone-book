@@ -17,15 +17,19 @@ namespace MyPhoneBook.Response
             Street = addressModel.Street;
             Building = addressModel.Building;
             Apartment = addressModel.Apartment;
-        }       
+
+        }  
+        
         public static List<AddressResponse> GetResponseList(List<AddressModel> addressModels)
         {
             List<AddressResponse> addresses = new List<AddressResponse>();
+
             foreach (var addressModel in addressModels)
             {
                 var addressResponce = new AddressResponse(addressModel);
                 addresses.Add(addressResponce);
             }
+
             return addresses;
         }
     }

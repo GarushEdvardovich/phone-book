@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPhoneBook.Dal.Migrations
 {
     [DbContext(typeof(MyPhoneBookContext))]
-    [Migration("20220517185324_999")]
-    partial class _999
+    [Migration("20220524091013_777-999")]
+    partial class _777999
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

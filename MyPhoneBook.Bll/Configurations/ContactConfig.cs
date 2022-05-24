@@ -8,19 +8,17 @@ namespace MyPhoneBook.Bll.ContactConfig
     {
         public void Configure(EntityTypeBuilder<Contact> builder)
         {
-
             builder.Property(x => x.Id).IsRequired();
             builder.ToTable<Contact>("Contact");
-
         }
     }
+
     public class AddressConfig : IEntityTypeConfiguration<Address>
     {
         public void Configure(EntityTypeBuilder<Address> builder)
         {
             builder.Property(x => x.Id).IsRequired();
             builder.ToTable<Address>("Address");
-
         }
     }
 }

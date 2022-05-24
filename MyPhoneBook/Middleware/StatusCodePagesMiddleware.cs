@@ -18,9 +18,8 @@ namespace MyPhoneBook.Middleware
         {
             await _next(context);
             var response = context.Response;
-            if ((response.StatusCode >= 400 && response.StatusCode <= 599) && !response.ContentLength.HasValue && string.IsNullOrEmpty(response.ContentType))
-            {               
-               
+            if ((response.StatusCode >= 400 && response.StatusCode <= 599) /*&& !response.ContentLength.HasValue && string.IsNullOrEmpty(response.ContentType)*/)
+            {           
                 await _options.HandleAsync(new StatusCodeContext(context, _options, _next));
             }
            

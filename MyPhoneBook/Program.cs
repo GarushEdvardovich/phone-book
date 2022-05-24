@@ -42,7 +42,7 @@ app.Run();
 void Middleware(IApplicationBuilder app, IWebHostEnvironment env)
 {    
     app.UseStatusCodePagesWithReExecute("/Error");
-   // app.UseMiddleware<LoggingMiddleware>();
+    app.UseMiddleware<LoggingMiddleware>();
     app.UseMiddleware<StatusCodePagesMiddleware>();
     app.ConfigureExceptionHandler(env);
     
